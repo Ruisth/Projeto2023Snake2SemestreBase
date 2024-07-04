@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
+
+import coordination.FinishCountDownLatch;
 import game.GameElement;
 import game.Goal;
 import game.Killer;
@@ -21,7 +23,9 @@ public abstract class Board extends Observable {
 	public static final int WIDTH = 30;
 	public static final int HEIGHT = 30;
 	protected LinkedList<Snake> snakes = new LinkedList<Snake>();
+	protected LinkedList<Obstacle> obstacles= new LinkedList<Obstacle>();
 	protected boolean isFinished;
+	public static FinishCountDownLatch countDownLatch = new FinishCountDownLatch(Goal.MAX_VALUE);
 
 	public Board() {
 		cells = new Cell[WIDTH][HEIGHT];
@@ -51,6 +55,21 @@ public abstract class Board extends Observable {
 
 	public void addGameElement(GameElement gameElement) {
 		//TODO
+		boolean placed=false;
+		while(!placed) {
+			BoardPosition pos=getRandomPosition();
+			if(!getCell(pos).isOcupied() && !getCell(pos).isOcupiedByGoal()) {
+				getCell(pos).setGameElement(gameElement);
+				if (gameElement instanceof Obstacle){
+					setObstaclePosition(pos);
+				}
+				if(gameElement instanceof Goal) {
+					setGoalPosition(pos);
+					System.out.println("Goal placed at:"+pos);
+				}
+				placed=true;
+			}
+		}
 	}
 
 	public List<BoardPosition> getNeighboringPositions(Cell cell) {
@@ -73,19 +92,55 @@ public abstract class Board extends Observable {
 		return null;
 	}
 
-	protected Goal addGoal() {
+	public Goal addGoal() {
 		Goal goal=new Goal(this);
 		addGameElement( goal);
 		return goal;
 	}
 
+	public void setGoalValue(int value) {
+		getCell(getGoalPosition()).getGoal().setValue(value);
+	}
+
+
 	protected void addObstacles(int numberObstacles) {
 		//TODO
+		getObstacles().clear();
+		while(numberObstacles>0) {
+			Obstacle obs=new Obstacle(this);
+			addGameElement(obs);
+			getObstacles().add(obs);
+			numberObstacles--;
+		}
+	}
+
+	public Obstacle getObstacle(BoardPosition p) {
+		Cell newCell = getCell(p);
+		return (Obstacle) newCell.getGameElement();
+	}
+
+	public void setObstaclePosition(BoardPosition obstaclePosition){
+		Obstacle o = getObstacle(obstaclePosition);
+    	if (o != null) {
+        	o.setX(obstaclePosition.getX());
+        	o.setY(obstaclePosition.getY());
+    	} else {
+        	System.err.println("No obstacle found at the given position.");
+    	}
+	}
+
+	public LinkedList<Obstacle> getObstacles() {
+		return obstacles;
+	}
+
+	public void setObstacles(LinkedList<Obstacle> obstacles) {
+		this.obstacles = obstacles;
 	}
 
 	public LinkedList<Snake> getSnakes() {
 		return snakes;
 	}
+
 
 
 	@Override
@@ -102,17 +157,12 @@ public abstract class Board extends Observable {
 	
 	public void removeGoal() {
 		//TODO
+
 		
 	}
 	public boolean isFinished() {
 		return isFinished;
 
-	}
-
-	public LinkedList<Obstacle> getObstacles() {
-		//TODO
-		// percorrer cells e acumular obstáculos numa lista
-		return null;
 	}
 
 

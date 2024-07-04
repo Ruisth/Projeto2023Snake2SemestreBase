@@ -41,4 +41,16 @@ public class BoardPosition implements Serializable{
 	public BoardPosition getCellRight() {
 		return new BoardPosition(x+1, y);
 	}
+
+	public int getX() {
+		return x;
+	}
+
+	public int getY() {
+		return y;
+	}
+
+	public static boolean isValid(BoardPosition position){
+		return position.x >= 0 && position.y >= 0 && position.x < Board.WIDTH && position.y < Board.HEIGHT;
+	}
 }

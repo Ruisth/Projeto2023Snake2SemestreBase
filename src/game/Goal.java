@@ -3,6 +3,8 @@ package game;
 import environment.Board;
 import environment.LocalBoard;
 
+import static environment.Board.countDownLatch;
+
 public class Goal extends GameElement  {
 	private int value=1;
 	private Board board;
@@ -17,7 +19,14 @@ public class Goal extends GameElement  {
 		value++;
 	}
 
-	public int getGoalValue() {
-		return value;
+	public void captureGoal() throws InterruptedException {
+		// Increment the goal's value
+		incrementValue();
+		System.out.println("Novo valor : " + this.value + " !!!!!! ");
+		countDownLatch.countDown();
+	}
+
+	public void setValue(int value) {
+		this.value = value;
 	}
 }

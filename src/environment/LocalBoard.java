@@ -8,12 +8,8 @@ import java.util.Observable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import game.GameElement;
-import game.Goal;
-import game.Obstacle;
-import game.Snake;
+import game.*;
 import server.Server;
-import game.AutomaticSnake;
 
 public class LocalBoard extends Board{
 	
@@ -23,8 +19,15 @@ public class LocalBoard extends Board{
 
 	public LocalBoard() {		
 		// TODO
+		for(int i = 0; i < NUM_SNAKES; i++) {
+			AutomaticSnake snake = new AutomaticSnake(i, this);
+			snakes.add(snake);
+		}
 		// place game elements and snakes
+		addObstacles(NUM_OBSTACLES);
 
+		Goal goal=addGoal();
+		System.err.println("All elements placed");
 	}
 
 	// synchronization in cell
@@ -32,6 +35,21 @@ public class LocalBoard extends Board{
 	public void init() {
 		// TODO
 		// Start Threads
+		// Create an ExecutorService with a fixed number of threads
+		ExecutorService pool = Executors.newFixedThreadPool(NUM_SIMULTANEOUS_MOVING_OBSTACLES);
+
+		// Submit tasks for each snake to the ExecutorService
+		for (Snake snake : snakes) {
+			snake.start();
+		}
+
+		// TODO: launch other threads
+		for (Obstacle obs : obstacles) {
+			ObstacleMover mover = new ObstacleMover(obs, this);
+			pool.submit(mover);
+		}
+		pool.shutdown();
+		setChanged();
 	}
 
 	
