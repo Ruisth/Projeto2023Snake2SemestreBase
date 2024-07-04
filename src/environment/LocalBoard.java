@@ -1,17 +1,12 @@
 package environment;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Observable;
+import java.io.Serializable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import game.*;
-import server.Server;
 
-public class LocalBoard extends Board{
+public class LocalBoard extends Board implements Serializable {
 	
 	private static final int NUM_SNAKES = 6;
 	private static final int NUM_OBSTACLES = 25;
@@ -58,6 +53,27 @@ public class LocalBoard extends Board{
 //		TODO
 	}
 
+	public void stopSnakes() {
+		for (Snake s : snakes) {
+			s.interrupt();
+			System.out.println("COBRAS PARADAS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		}
+	}
+
+	public void endGame() {
+		try {
+			countDownLatch.await();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		//Matar threads e terminar jogo
+		stopSnakes();
+
+		isFinished = true;
+		//O que fazer quando acabar
+		System.err.println("GAME FINISHED!");
+	}
 
 
 	// Ignore these methods: only for remote players, which are not present in this project

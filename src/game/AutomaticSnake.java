@@ -1,5 +1,6 @@
 package game;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,7 +12,7 @@ import environment.Cell;
 import environment.Board;
 import environment.BoardPosition;
 
-public class AutomaticSnake extends Snake {
+public class AutomaticSnake extends Snake implements Serializable {
 
 	private boolean state;
 

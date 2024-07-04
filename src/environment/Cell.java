@@ -8,11 +8,12 @@ import game.Obstacle;
 import game.Snake;
 import game.AutomaticSnake;
 
+import java.io.Serializable;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class Cell{
+public class Cell implements Serializable {
 	private BoardPosition position;
 	private Snake ocuppyingSnake = null;
 	private GameElement gameElement=null;

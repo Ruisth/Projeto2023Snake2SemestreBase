@@ -18,6 +18,7 @@ import game.Snake;
 public abstract class Board extends Observable {
 	protected Cell[][] cells;
 	private BoardPosition goalPosition;
+	protected Board board;
 	public static final long PLAYER_PLAY_INTERVAL = 100;
 	public static final long REMOTE_REFRESH_INTERVAL = 200;
 	public static final int WIDTH = 30;
@@ -141,6 +142,10 @@ public abstract class Board extends Observable {
 		return snakes;
 	}
 
+	public void setSnakes(LinkedList<Snake> snakes) {
+		this.snakes = snakes;
+		setChanged();
+	}
 
 
 	@Override
@@ -181,12 +186,20 @@ public abstract class Board extends Observable {
 
 
 
-	protected void setCells(Cell[][] cells) {
+	public void setCells(Cell[][] cells) {
 		this.cells=cells;
 	}
 
 	public Cell[][] getCells() {
 		return cells;
+	}
+
+	public Board getBoard() {
+		return this;
+	}
+
+	public void setBoard(Board board) {
+		this.board = board;
 	}
 
 }
